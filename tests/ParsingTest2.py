@@ -7,6 +7,7 @@ def _request(url):
 
 	quotes = soup.find_all('div', class_='feed__item l-island-round')
 
+	_reqOut = []
 
 	for quote in quotes:
 
@@ -24,18 +25,22 @@ def _request(url):
 
 
 		if title:
-			print(title.get_text().replace("Статьи редакции", '').strip(' \n\t'))
+			#print(title.get_text().replace("Статьи редакции", '').strip(' \n\t'))
+			title = title.get_text().replace("Статьи редакции", '').strip(' \n\t')
 
 		if subtitle_text:
-			print(subtitle_text.get_text().replace("Статьи редакции", '').strip(' \n\t'))
+			#print(subtitle_text.get_text().replace("Статьи редакции", '').strip(' \n\t'))
+			subtitle_text = subtitle_text.get_text().replace("Статьи редакции", '').strip(' \n\t')
 
 		if author_text:
-			print(author_text.get_text().strip(' \n\t'))
-			print()
+			#print(author_text.get_text().strip(' \n\t'))
+			author_text = author_text.get_text().strip(' \n\t')
+
+		_reqOut += [[author_text, title, subtitle_text]]
+
+	return _reqOut
 
 
-
-
-_request('https://dtf.ru/')
+print(_request('https://dtf.ru/'))
 
 input()
