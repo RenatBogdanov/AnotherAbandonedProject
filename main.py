@@ -10,10 +10,10 @@ def getPostImg(image_url, name, path):
 	imgPath = str(path + name)
 	with open(imgPath, 'wb') as handler:
 		handler.write(img_data)
-	print(name, 'is on device')
+	#print(name, 'is on device')
 
-def genNameImg():
-	name = str('img_' + curDate() + '_' + str(random.randint(1000000, 9999999)) + '.jpg')
+def genNameImg(name):
+	name = str('img_' + curDate() + '_' + name + '.jpg')
 	return name
 
 def curDate():
@@ -29,37 +29,60 @@ def curDate():
 	return fullDate
 
 def _request(url):
-
-
 	response = requests.get(url)
 	soup = BeautifulSoup(response.text, 'lxml')
 
-	quotes = soup.find_all('div', class_='content-title content-title--short l-island-a')
-	images = soup.find_all('div', class_= "andropov_image")
-	avatars = soup.find_all('img', class_= "andropov_image")
+	quotes = soup.find_all('div', class_='feed__item l-island-round')
 
-	n = 1
+	_reqOut = []
+
 	for quote in quotes:
 
-		print(str(n)+".", quote.text.replace("Статьи редакции", '').strip(' \n\t'))
+		if quote:
+			
+			title = quote.find('div', class_='content-title content-title--short l-island-a')
+			
+			#Заголовок
+			if title:
+				title = title.get_text().replace("Статьи редакции", '').strip(' \n\t')
 
-		n += 1
+			#Автор или подсайт
+			author = quote.find('div', class_='l-island-a')
+			
+			if author:
+				author_text = author.find('a')
+				if author_text:
+					author_text = author_text.get_text().strip(' \n\t')
 
-	n = 1
+			#Подзаголовок
+			subtitle = quote.find('div', class_='content-container')
 
-	for image in images:
-		if image.has_attr('data-image-src'):
-			print(str(n) + '. ' + image['data-image-src'])
-			nameImg = image['data-image-src']
-			getPostImg(nameImg, genNameImg(), 'images/postImages/')
-		n += 1
+			if subtitle:
+				subtitle_text = subtitle.find('p')
 
-	for avatar in avatars:
-		if avatar.has_attr('data-image-src'):
-			print(str(n) + '. ' + image['data-image-src'])
-			nameImg = avatar['data-image-src']
-			getPostImg(nameImg, genNameImg(), 'images/userProfileAvatars/')
-		n += 1
+				if subtitle_text:
+					#print(subtitle_text.get_text().replace("Статьи редакции", '').strip(' \n\t'))
+					subtitle_text = subtitle_text.get_text().replace("Статьи редакции", '').strip(' \n\t')
+
+			#Изображение
+			image = quote.find('div', class_= "andropov_image")
+			if image:
+				urlImg = image['data-image-src']
+				nameImg = image['data-image-src'].replace('https://leonardo.osnova.io/', '').replace('/', '')
+				getPostImg(urlImg, genNameImg(nameImg), 'images/postImages/')
+
+			#Аватар
+			avatar = quote.find('img', class_= "andropov_image")
+			if avatar:
+				urlAvatar = avatar['data-image-src']
+				nameAvatar = avatar['data-image-src'].replace('https://leonardo.osnova.io/', '').replace('/', '')
+				getPostImg(urlAvatar, genNameImg(nameImg), 'images/userProfileAvatars/')
+
+		#Добавление информации в массив массивов
+		_reqOut += [[author_text, nameAvatar, title, subtitle_text, nameImg]]
+	#print(_reqOut)
+	
+	return _reqOut
 
 def clearDir(dir): 
     for f in os.listdir(dir):
