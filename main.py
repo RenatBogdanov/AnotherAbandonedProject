@@ -52,13 +52,13 @@ def _request(url):
 		if image.has_attr('data-image-src'):
 			print(str(n) + '. ' + image['data-image-src'])
 			nameImg = image['data-image-src']
-			getPostImg(nameImg, genNameImg(), 'images/')
+			getPostImg(nameImg, genNameImg(), 'images/postImages/')
 		n += 1
 	for avatar in avatars:
 		if avatar.has_attr('data-image-src'):
 			print(str(n) + '. ' + image['data-image-src'])
 			nameImg = avatar['data-image-src']
-			getPostImg(nameImg, genNameImg(), 'userProfileAvatars/')
+			getPostImg(nameImg, genNameImg(), 'images/userProfileAvatars/')
 		n += 1
 
 def clearDir(dir): 
@@ -68,8 +68,8 @@ def clearDir(dir):
 _request('https://dtf.ru/')
 
 def closePr():
-	clearDir('userProfileAvatars/')
-	clearDir('images/')
+	clearDir('images/postImages')
+	clearDir('images/userProfileAvatars/')
 
 input()
 closePr()
