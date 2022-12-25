@@ -12,32 +12,45 @@ def _request(url):
 	for quote in quotes:
 
 		if quote:
+			
 			title = quote.find('div', class_='content-title content-title--short l-island-a')
-			author = quote.find('div', class_='l-island-a')
-			subtitle = quote.find('div', class_='content-container')
+			
+			#Заголовок
+			if title:
+				title = title.get_text().replace("Статьи редакции", '').strip(' \n\t')
 
+			#Автор или подсайт
+			author = quote.find('div', class_='l-island-a')
+			
 			if author:
 				author_text = author.find('a')
+				if author_text:
+					author_text = author_text.get_text().strip(' \n\t')
+
+			#Подзаголовок
+			subtitle = quote.find('div', class_='content-container')
 
 			if subtitle:
 				subtitle_text = subtitle.find('p')
 
+				if subtitle_text:
+					#print(subtitle_text.get_text().replace("Статьи редакции", '').strip(' \n\t'))
+					subtitle_text = subtitle_text.get_text().replace("Статьи редакции", '').strip(' \n\t')
 
+			#Изображение
+			image = quote.find('div', class_= "andropov_image")
+			if image:
+				nameImg = image['data-image-src'].replace('https://leonardo.osnova.io/', '').replace('/', '')
 
-		if title:
-			#print(title.get_text().replace("Статьи редакции", '').strip(' \n\t'))
-			title = title.get_text().replace("Статьи редакции", '').strip(' \n\t')
+			#Аватар
+			avatar = quote.find('img', class_= "andropov_image")
+			if avatar:
+				nameAvatar = avatar['data-image-src'].replace('https://leonardo.osnova.io/', '').replace('/', '')
 
-		if subtitle_text:
-			#print(subtitle_text.get_text().replace("Статьи редакции", '').strip(' \n\t'))
-			subtitle_text = subtitle_text.get_text().replace("Статьи редакции", '').strip(' \n\t')
+		#Добавление информации в массив массивов
+		_reqOut += [[author_text, nameAvatar, title, subtitle_text, nameImg]]
 
-		if author_text:
-			#print(author_text.get_text().strip(' \n\t'))
-			author_text = author_text.get_text().strip(' \n\t')
-
-		_reqOut += [[author_text, title, subtitle_text]]
-
+	
 	return _reqOut
 
 
