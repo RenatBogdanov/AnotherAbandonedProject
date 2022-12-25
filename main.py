@@ -1,4 +1,3 @@
-import requests
 import random
 from datetime import datetime
 import requests
@@ -54,6 +53,7 @@ def _request(url):
 			nameImg = image['data-image-src']
 			getPostImg(nameImg, genNameImg(), 'images/postImages/')
 		n += 1
+
 	for avatar in avatars:
 		if avatar.has_attr('data-image-src'):
 			print(str(n) + '. ' + image['data-image-src'])
