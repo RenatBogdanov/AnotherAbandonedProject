@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 import os
 
 
+#Скачивание изображения с поста
 def getPostImg(image_url, name, path):
 	img_data = requests.get(image_url).content
 	imgPath = str(path + name)
@@ -12,10 +13,12 @@ def getPostImg(image_url, name, path):
 		handler.write(img_data)
 	#print(name, 'is on device')
 
+#Создание имени изображения
 def genNameImg(name):
 	name = str('img_' + curDate() + '_' + name + '.jpg')
 	return name
 
+#Текущие дата и время
 def curDate():
 	curDay = str(datetime.now().day)
 	curMonth = str(datetime.now().month)
@@ -28,6 +31,7 @@ def curDate():
 
 	return fullDate
 
+#Запрос к сайту и получение данных
 def _request(url):
 	response = requests.get(url)
 	soup = BeautifulSoup(response.text, 'lxml')
@@ -79,20 +83,27 @@ def _request(url):
 				getPostImg(urlAvatar, genNameImg(nameImg), 'images/userProfileAvatars/')
 
 		#Добавление информации в массив массивов
-		_reqOut += [[author_text, nameAvatar, title, subtitle_text, nameImg]]
-	#print(_reqOut)
+		new_info = str(author_text), str(title), str(subtitle_text), str(nameImg), str(nameAvatar)
+		_reqOut += [new_info]
+
+	print(_reqOut)
 	
 	return _reqOut
 
+#Очистка кеша
 def clearDir(dir): 
     for f in os.listdir(dir):
         os.remove(os.path.join(dir, f))
 
-_request('https://dtf.ru/')
-
 def closePr():
 	clearDir('images/postImages')
 	clearDir('images/userProfileAvatars/')
+
+#---------main--------------
+
+_request('https://dtf.ru/kek/entries/new')
+
+
 
 input()
 closePr()
